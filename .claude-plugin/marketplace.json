@@ -1,0 +1,18 @@
+{
+  "name": "leayeh-skills",
+  "description": "Personal Agent Skills Collection",
+  "owner": {
+    "name": "Lea Yeh",
+    "email": "smile2140@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "commit-splitter",
+      "description": "Scan all staged/unstaged changes, combine with session context and plan, generate an ordered conventional-commit plan within a token budget",
+      "author": { "name": "Lea Yeh" },
+      "source": "./plugins/commit-splitter",
+      "category": "development",
+      "homepage": "https://github.com/LeaYeh/skills"
+    }
+  ]
+}
