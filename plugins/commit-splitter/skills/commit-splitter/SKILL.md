@@ -1,6 +1,6 @@
 ---
 name: commit-splitter
-description: Scan all staged/unstaged changes, combine with session context and plan, generate an ordered conventional-commit plan within a token budget. Use when the user says "split commits", or "commit plan".
+description: Scan all staged/unstaged changes, combine with session context and plan, generate an ordered conventional-commit plan within a token budget. Use when the user says "split commits", "commit plan", wants to organize changes into separate commits before a PR, asks how to structure pending work into git history, or mentions staging files with multiple logical changes.
 ---
 
 Scan all pending changes and produce a best-practice commit plan. Do NOT execute any git write operation until the user confirms.
