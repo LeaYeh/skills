@@ -3,19 +3,19 @@
     "copilot-review@appleboy-skills": true,
     "andrej-karpathy-skills@karpathy-skills": true,
     "commit-splitter@leayeh-skills": true,
-    "diagnose@mattpocock-skills": true,
-    "grill-with-docs@mattpocock-skills": true,
-    "triage@mattpocock-skills": true,
-    "improve-codebase-architecture@mattpocock-skills": true,
-    "tdd@mattpocock-skills": true,
-    "to-issues@mattpocock-skills": true,
-    "to-prd@mattpocock-skills": true,
-    "zoom-out@mattpocock-skills": true,
-    "prototype@mattpocock-skills": true,
-    "caveman@mattpocock-skills": true,
-    "grill-me@mattpocock-skills": true,
-    "handoff@mattpocock-skills": true,
-    "write-a-skill@mattpocock-skills": true
+    "diagnose@leayeh-skills": true,
+    "grill-with-docs@leayeh-skills": true,
+    "triage@leayeh-skills": true,
+    "improve-codebase-architecture@leayeh-skills": true,
+    "tdd@leayeh-skills": true,
+    "to-issues@leayeh-skills": true,
+    "to-prd@leayeh-skills": true,
+    "zoom-out@leayeh-skills": true,
+    "prototype@leayeh-skills": true,
+    "caveman@leayeh-skills": true,
+    "grill-me@leayeh-skills": true,
+    "handoff@leayeh-skills": true,
+    "write-a-skill@leayeh-skills": true
   },
   "extraKnownMarketplaces": {
     "appleboy-skills": {
@@ -34,12 +34,6 @@
       "source": {
         "source": "github",
         "repo": "LeaYeh/skills"
-      }
-    },
-    "mattpocock-skills": {
-      "source": {
-        "source": "github",
-        "repo": "mattpocock/skills"
       }
     }
   },

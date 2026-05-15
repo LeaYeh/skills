@@ -9,10 +9,142 @@
     {
       "name": "commit-splitter",
       "description": "Scan all staged/unstaged changes, combine with session context and plan, generate an ordered conventional-commit plan within a token budget",
-      "author": { "name": "Lea Yeh" },
+      "author": {
+        "name": "Lea Yeh"
+      },
       "source": "./plugins/commit-splitter",
       "category": "development",
       "homepage": "https://github.com/LeaYeh/skills"
+    },
+    {
+      "name": "diagnose",
+      "description": "Diagnose bugs and issues by systematically gathering context and forming hypotheses",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/diagnose",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "grill-with-docs",
+      "description": "Interview the user about a codebase using its documentation as the primary source",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/grill-with-docs",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "triage",
+      "description": "Triage a list of issues or tasks, prioritizing by impact and effort",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/triage",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "improve-codebase-architecture",
+      "description": "Analyze and suggest improvements to the codebase architecture",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/improve-codebase-architecture",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "tdd",
+      "description": "Drive development using test-driven development practices",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/tdd",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "to-issues",
+      "description": "Convert a plan or discussion into actionable GitHub issues",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/to-issues",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "to-prd",
+      "description": "Convert a discussion or plan into a product requirements document",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/to-prd",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "zoom-out",
+      "description": "Step back and review the bigger picture of what is being built",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/zoom-out",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "prototype",
+      "description": "Rapidly prototype a solution to validate an idea",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/prototype",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "caveman",
+      "description": "Explain complex code or concepts in simple, plain language",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/caveman",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "grill-me",
+      "description": "Interview the user relentlessly about a plan or design until reaching shared understanding",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/grill-me",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "handoff",
+      "description": "Prepare a clear handoff summary of current work and context",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/handoff",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
+    },
+    {
+      "name": "write-a-skill",
+      "description": "Help the user write a new Claude Code skill",
+      "author": {
+        "name": "Matt Pocock"
+      },
+      "source": "./plugins/write-a-skill",
+      "category": "development",
+      "homepage": "https://github.com/mattpocock/skills"
     }
   ]
 }
