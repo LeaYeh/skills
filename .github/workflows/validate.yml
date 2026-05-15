@@ -1,0 +1,58 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  json-valid:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate all JSON files
+        run: |
+          set -e
+          jq '.' settings.json > /dev/null
+          jq '.' .claude-plugin/marketplace.json > /dev/null
+          jq '.' .claude/settings.json > /dev/null
+          jq '.' plugins/commit-splitter/.claude-plugin/plugin.json > /dev/null
+          echo "All JSON files valid"
+
+  plugin-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify plugin directory structure matches marketplace.json
+        run: |
+          set -eo pipefail
+          jq -r '.plugins[] | "\(.name) \(.source)"' .claude-plugin/marketplace.json \
+          | while IFS=' ' read -r name source; do
+              dir="${source#./}"
+              echo "Checking: $name ($dir)"
+              test -d "$dir" \
+                || { echo "FAIL: missing plugin dir '$dir'"; exit 1; }
+              test -f "$dir/.claude-plugin/plugin.json" \
+                || { echo "FAIL: missing $dir/.claude-plugin/plugin.json"; exit 1; }
+              actual=$(jq -r '.name' "$dir/.claude-plugin/plugin.json")
+              [ "$actual" = "$name" ] \
+                || { echo "FAIL: name mismatch for '$name': plugin.json says '$actual'"; exit 1; }
+              test -f "$dir/skills/$name/SKILL.md" \
+                || { echo "FAIL: missing $dir/skills/$name/SKILL.md"; exit 1; }
+              echo "  OK"
+            done
+
+  settings-consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify every enabled plugin references a declared marketplace
+        run: |
+          set -eo pipefail
+          jq -r '.enabledPlugins | keys[]' settings.json \
+          | while read -r entry; do
+              marketplace="${entry##*@}"
+              jq -e ".extraKnownMarketplaces[\"$marketplace\"]" settings.json > /dev/null \
+                || { echo "FAIL: '$entry' references undeclared marketplace '$marketplace'"; exit 1; }
+              echo "OK: $entry"
+            done
