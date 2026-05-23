@@ -1,0 +1,7 @@
+{
+  "name": "checkpoint",
+  "description": "Save and restore session context across token resets and machine switches",
+  "author": { "name": "Lea Yeh" },
+  "category": "productivity",
+  "homepage": "https://github.com/LeaYeh/skills"
+}
