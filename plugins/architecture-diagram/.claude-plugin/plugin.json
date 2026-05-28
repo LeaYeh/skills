@@ -1,0 +1,7 @@
+{
+  "name": "architecture-diagram",
+  "description": "Generate beautiful dark-themed system architecture diagrams as standalone HTML/SVG files",
+  "author": { "name": "Cocoon AI", "email": "hello@cocoon-ai.com" },
+  "category": "development",
+  "homepage": "https://github.com/Cocoon-AI/architecture-diagram-generator"
+}
