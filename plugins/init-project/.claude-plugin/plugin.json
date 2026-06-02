@@ -1,0 +1,7 @@
+{
+  "name": "init-project",
+  "description": "Bootstrap Claude Code framework config for a new project: generates CLAUDE.md framework section and .claude/settings.json with standard harness",
+  "author": { "name": "Lea Yeh" },
+  "category": "productivity",
+  "homepage": "https://github.com/LeaYeh/skills"
+}
