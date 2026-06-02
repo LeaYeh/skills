@@ -1,0 +1,9 @@
+{
+  "name": "tdd",
+  "description": "Drive development using test-driven development practices",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "diagnose",
+  "description": "Diagnose bugs and issues by systematically gathering context and forming hypotheses",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

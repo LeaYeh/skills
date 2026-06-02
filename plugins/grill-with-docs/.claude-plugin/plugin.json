@@ -1,0 +1,9 @@
+{
+  "name": "grill-with-docs",
+  "description": "Interview the user about a codebase using its documentation as the primary source",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

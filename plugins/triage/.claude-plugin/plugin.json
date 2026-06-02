@@ -1,0 +1,9 @@
+{
+  "name": "triage",
+  "description": "Triage a list of issues or tasks, prioritizing by impact and effort",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

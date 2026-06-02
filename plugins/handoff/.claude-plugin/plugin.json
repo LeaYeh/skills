@@ -1,0 +1,9 @@
+{
+  "name": "handoff",
+  "description": "Prepare a clear handoff summary of current work and context",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

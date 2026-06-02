@@ -1,0 +1,7 @@
+{
+  "name": "record-adr",
+  "description": "Scan the current session context and the project's adr/ directory to create or update an Architecture Decision Record",
+  "author": { "name": "Lea Yeh" },
+  "category": "development",
+  "homepage": "https://github.com/LeaYeh/skills"
+}

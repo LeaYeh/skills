@@ -1,0 +1,9 @@
+{
+  "name": "prototype",
+  "description": "Rapidly prototype a solution to validate an idea",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

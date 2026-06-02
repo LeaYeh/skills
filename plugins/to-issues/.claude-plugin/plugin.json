@@ -1,0 +1,9 @@
+{
+  "name": "to-issues",
+  "description": "Convert a plan or discussion into actionable GitHub issues",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "grill-me",
+  "description": "Interview the user relentlessly about a plan or design until reaching shared understanding",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

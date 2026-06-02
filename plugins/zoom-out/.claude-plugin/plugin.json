@@ -1,0 +1,9 @@
+{
+  "name": "zoom-out",
+  "description": "Step back and review the bigger picture of what is being built",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

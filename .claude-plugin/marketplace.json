@@ -156,6 +156,26 @@
       "source": "./plugins/architecture-diagram",
       "category": "development",
       "homepage": "https://github.com/Cocoon-AI/architecture-diagram-generator"
+    },
+    {
+      "name": "checkpoint",
+      "description": "Save and restore session context across token resets and machine switches",
+      "author": {
+        "name": "Lea Yeh"
+      },
+      "source": "./plugins/checkpoint",
+      "category": "productivity",
+      "homepage": "https://github.com/LeaYeh/skills"
+    },
+    {
+      "name": "record-adr",
+      "description": "Scan the current session context and the project's adr/ directory to create or update an Architecture Decision Record",
+      "author": {
+        "name": "Lea Yeh"
+      },
+      "source": "./plugins/record-adr",
+      "category": "development",
+      "homepage": "https://github.com/LeaYeh/skills"
     }
   ]
 }

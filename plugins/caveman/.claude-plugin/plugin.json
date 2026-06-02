@@ -1,0 +1,9 @@
+{
+  "name": "caveman",
+  "description": "Explain complex code or concepts in simple, plain language",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

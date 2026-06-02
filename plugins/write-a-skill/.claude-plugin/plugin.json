@@ -1,0 +1,9 @@
+{
+  "name": "write-a-skill",
+  "description": "Help the user write a new Claude Code skill",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

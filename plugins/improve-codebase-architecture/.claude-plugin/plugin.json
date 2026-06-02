@@ -1,0 +1,9 @@
+{
+  "name": "improve-codebase-architecture",
+  "description": "Analyze and suggest improvements to the codebase architecture",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}

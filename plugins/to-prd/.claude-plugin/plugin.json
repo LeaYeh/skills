@@ -1,0 +1,9 @@
+{
+  "name": "to-prd",
+  "description": "Convert a discussion or plan into a product requirements document",
+  "author": {
+    "name": "Matt Pocock"
+  },
+  "category": "development",
+  "homepage": "https://github.com/mattpocock/skills"
+}
