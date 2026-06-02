@@ -17,7 +17,8 @@
     "handoff@leayeh-skills": true,
     "write-a-skill@leayeh-skills": true,
     "checkpoint@leayeh-skills": true,
-    "record-adr@leayeh-skills": true
+    "record-adr@leayeh-skills": true,
+    "architecture-diagram@leayeh-skills": true
   },
   "extraKnownMarketplaces": {
     "appleboy-skills": {
