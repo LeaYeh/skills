@@ -56,3 +56,14 @@ jobs:
                 || { echo "FAIL: '$entry' references undeclared marketplace '$marketplace'"; exit 1; }
               echo "OK: $entry"
             done
+      - name: Verify every leayeh-skills marketplace plugin is enabled in settings.json
+        run: |
+          set -eo pipefail
+          jq -r '.plugins[].name' .claude-plugin/marketplace.json \
+          | while read -r name; do
+              key="${name}@leayeh-skills"
+              enabled=$(jq -r --arg k "$key" '.enabledPlugins[$k] // "missing"' settings.json)
+              [ "$enabled" != "missing" ] \
+                || { echo "FAIL: '$key' is in marketplace.json but not enabled in settings.json"; exit 1; }
+              echo "OK: $key"
+            done
