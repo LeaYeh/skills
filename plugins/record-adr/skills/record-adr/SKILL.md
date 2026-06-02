@@ -32,7 +32,15 @@ description: Scan the current session context and the project's adr/ directory t
    - Maintain `adr/README.md` as a table: `| ADR | Title (EN) | Status | Date |`
    - Add a new row or update the existing row for the affected ADR
 
-6. **Do NOT commit** — leave files for user review
+6. **Propose CLAUDE.md updates**
+   - Read the project's `CLAUDE.md` (if it exists)
+   - Compare it against the decisions just recorded in the ADR
+   - Identify any rules, constraints, or architectural facts that belong in CLAUDE.md but are missing or stale
+   - Present a **targeted diff** — only lines that need adding or changing, not a full rewrite
+   - Example additions: new design rules, banned patterns, required test levels, declared ML metrics
+   - Ask: "Should I apply these changes to CLAUDE.md?" — do NOT write without confirmation
+
+7. **Do NOT commit** — leave files for user review
 
 ## Template
 
