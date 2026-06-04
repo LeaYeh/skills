@@ -1,5 +1,6 @@
 ---
 name: record-adr
+disable-model-invocation: true
 description: Scan the current session context and the project's adr/ directory to create or update an Architecture Decision Record. Use after any decision point (/grill-me, /plan, or design discussions) when the user invokes /record-adr. Maintains adr/README.md as an auto-updated index.
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: commit-splitter
+disable-model-invocation: true
 description: Scan all staged/unstaged changes, combine with session context and plan, generate an ordered conventional-commit plan within a token budget. Use when the user says "split commits", "commit plan", wants to organize changes into separate commits before a PR, asks how to structure pending work into git history, or mentions staging files with multiple logical changes.
 ---
 
