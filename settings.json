@@ -26,6 +26,7 @@
   "enabledPlugins": {
     "copilot-review@appleboy-skills": true,
     "andrej-karpathy-skills@karpathy-skills": true,
+    "learn-mentor@leayeh-skills": true,
     "commit-splitter@leayeh-skills": true,
     "diagnose@leayeh-skills": true,
     "grill-with-docs@leayeh-skills": true,

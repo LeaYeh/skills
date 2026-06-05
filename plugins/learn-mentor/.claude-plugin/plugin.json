@@ -1,0 +1,7 @@
+{
+  "name": "learn-mentor",
+  "description": "Learning mentor that drives true mastery of a topic instead of completing the task for you — decomposes a learning goal into stages and runs each through gap-surfacing, guided paper reading, hands-on implementation, and teach-back, withholding exactly the skill the goal targets",
+  "author": { "name": "Lea Yeh" },
+  "category": "development",
+  "homepage": "https://github.com/LeaYeh/skills"
+}
