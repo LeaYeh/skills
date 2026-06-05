@@ -7,6 +7,16 @@
   },
   "plugins": [
     {
+      "name": "learn-mentor",
+      "description": "Learning mentor that drives true mastery instead of completing the task for you — stages a learning goal through gap-surfacing, guided paper reading, hands-on implementation, and teach-back, withholding exactly the skill the goal targets",
+      "author": {
+        "name": "Lea Yeh"
+      },
+      "source": "./plugins/learn-mentor",
+      "category": "development",
+      "homepage": "https://github.com/LeaYeh/skills"
+    },
+    {
       "name": "commit-splitter",
       "description": "Scan all staged/unstaged changes, combine with session context and plan, generate an ordered conventional-commit plan within a token budget",
       "author": {
