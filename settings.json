@@ -44,7 +44,8 @@
     "checkpoint@leayeh-skills": true,
     "record-adr@leayeh-skills": true,
     "architecture-diagram@leayeh-skills": true,
-    "init-project@leayeh-skills": true
+    "init-project@leayeh-skills": true,
+    "understand-anything@understand-anything": true
   },
   "extraKnownMarketplaces": {
     "appleboy-skills": {
@@ -63,6 +64,12 @@
       "source": {
         "source": "github",
         "repo": "LeaYeh/skills"
+      }
+    },
+    "understand-anything": {
+      "source": {
+        "source": "github",
+        "repo": "Lum1104/Understand-Anything"
       }
     }
   },
