@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decision Graph</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" integrity="sha384-en/ztfPSRkGfME4KIm05joYXynqzUgbsG5nMrj/xEFAHXkeZfO3yMK8QQ+mP7p1/" crossorigin="anonymous"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'JetBrains Mono', monospace; background: #020617; color: #e2e8f0;
+      background-image: linear-gradient(#0b1220 1px, transparent 1px), linear-gradient(90deg, #0b1220 1px, transparent 1px);
+      background-size: 40px 40px; padding: 24px; }
+    .container { max-width: 1600px; margin: 0 auto; }
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; position: relative; }
+    .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: #22d3ee; box-shadow: 0 0 0 0 rgba(34,211,238,.7); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34,211,238,.5); } 70% { box-shadow: 0 0 0 10px rgba(34,211,238,0); } 100% { box-shadow: 0 0 0 0 rgba(34,211,238,0); } }
+    h1 { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+    .subtitle { color: #64748b; font-size: 11px; margin: 0 0 16px 22px; }
+    .toolbar { margin-left: auto; }
+    .toolbar-actions { display: none; gap: 6px; }
+    .toolbar.open .toolbar-actions { display: inline-flex; }
+    .toolbar button { background: #0f172a; color: #94a3b8; border: 1px solid #1e293b; border-radius: 6px;
+      font-family: inherit; font-size: 11px; padding: 5px 10px; cursor: pointer; }
+    .toolbar button:hover { color: #e2e8f0; border-color: #334155; }
+    .stage { position: relative; border: 1px solid #1e293b; border-radius: 12px; background: rgba(2,6,23,.5);
+      padding: 8px; overflow: visible; }
+    .stage svg { position: absolute; top: 0; left: 0; pointer-events: none; }
+    /* node */
+    .node { position: absolute; width: 250px; min-height: 124px; border-radius: 8px; padding: 10px 12px; cursor: default;
+      background: #0f172a; border: 1.5px solid #1f6feb; transition: transform .1s; }
+    .node:hover { transform: scale(1.02); z-index: 50; }
+    .node .idbadge { position: absolute; top: -9px; right: -9px; background: #1f6feb; color: #fff;
+      font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 7px; }
+    .node .q { font-size: 12px; font-weight: 600; color: #f1f5f9; line-height: 1.35; }
+    .node .qzh { display: block; font-size: 10.5px; font-weight: 500; color: #7dd3fc; margin-top: 2px; line-height: 1.3; }
+    .node .adopted { font-size: 10px; color: #34d399; margin-top: 6px; line-height: 1.3; }
+    .node .adopted .azh { color: #5eead4; }
+    .node .rejcount { font-size: 9px; color: #64748b; margin-top: 4px; }
+    /* status variants */
+    .node.stale { border-color: #64748b; border-style: dashed; opacity: .65; }
+    .node.stale .idbadge { background: #64748b; }
+    .node.graduated { border-color: #f0b429; box-shadow: 0 0 0 1px #f0b429; }
+    .node.graduated .idbadge { background: #f0b429; color: #1a1a1a; }
+    .node.abandoned { opacity: .35; }
+    /* hover detail panel */
+    .node .detail { display: none; position: absolute; top: calc(100% + 8px); left: 0; width: 300px;
+      background: #0b1220; border: 1px solid #334155; border-radius: 8px; padding: 10px 12px; z-index: 100;
+      box-shadow: 0 8px 24px rgba(0,0,0,.6); }
+    .node:hover .detail { display: block; }
+    .detail .premise { font-size: 10px; color: #94a3b8; margin-bottom: 8px; }
+    .detail .premise b { color: #22d3ee; }
+    .detail .rej-title { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+    .detail .rej { font-size: 10px; color: #cbd5e1; margin-bottom: 6px; line-height: 1.35; }
+    .detail .rej b { color: #fb7185; }
+    /* legend */
+    .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 10px; color: #94a3b8; }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 22px; height: 0; border-top-width: 2px; border-top-style: solid; display: inline-block; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; }
+    @media print { .toolbar { display: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="container" id="report-container">
+    <div class="header">
+      <div class="pulse-dot"></div>
+      <h1 id="title">Decision Graph</h1>
+      <div class="toolbar" id="toolbar">
+        <div class="toolbar-actions">
+          <button onclick="copyAsImage(this)">📋 Copy</button>
+          <button onclick="downloadPNG(this)">🖼️ PNG</button>
+          <button onclick="downloadPDF(this)">📄 PDF</button>
+        </div>
+        <button class="toolbar-toggle" onclick="document.getElementById('toolbar').classList.toggle('open')">⋯</button>
+      </div>
+    </div>
+    <p class="subtitle" id="subtitle">Backbone = dependency tree · dashed = cross-edges · hover a node for rejected options · #N = time axis<br>主幹=依賴樹 · 虛線=交叉邊 · hover 節點看否決選項 · #N=時間軸</p>
+    <div class="stage" id="stage">
+      <svg id="edges"></svg>
+    </div>
+    <div class="legend">
+      <span><i style="border-color:#475569"></i> backbone (depends-on)</span>
+      <span><i style="border-color:#a78bfa;border-top-style:dashed"></i> feeds</span>
+      <span><i style="border-color:#fbbf24;border-top-style:dashed"></i> supersedes</span>
+      <span><i style="border-color:#fb7185;border-top-style:dashed"></i> failure route</span>
+      <span><span class="swatch" style="border-color:#1f6feb"></span> active</span>
+      <span><span class="swatch" style="border-color:#64748b;border-style:dashed"></span> stale</span>
+      <span><span class="swatch" style="border-color:#f0b429"></span> graduated</span>
+    </div>
+  </div>
+
+  <script>
+    // ===========================================================================
+    //  REPLACE THIS BLOCK ONLY.  Everything below it is the reusable renderer.
+    //  One object per `### #N` node in decision-graph.md (see node-template.md).
+    //  Sample data = the learn-mentor graph, so this file renders standalone.
+    // ===========================================================================
+    //  Bilingual: `question`/`adopted`/`reason` = English (canonical); `*_zh` = Traditional Chinese (optional).
+    const META = { title: "Decision Graph — Learning Mentor Skill" };
+    const GRAPH = {
+      nodes: [
+        { id:1, question:"Skill positioning & persistence", question_zh:"技能定位與持久化", adopted:"new standalone skill + persistent artifact", adopted_zh:"全新獨立技能＋持久產物", status:"resolved", dependsOn:null, premise:null,
+          rejected:[{name:"Ephemeral conversational mentor",reason:"mastery needs cross-session accumulation",reason_zh:"精通需要跨 session 累積"},{name:"Branch inside grill-me",reason:"different posture + different persisted artifact",reason_zh:"姿態不同、持久產物也不同"}] },
+        { id:2, question:"Core session loop", question_zh:"核心 session 迴圈", adopted:"A→C→D→B (gap→read→implement→teach-back)", adopted_zh:"A→C→D→B（找缺口→閱讀→實作→教回去）", status:"resolved", dependsOn:1, premise:"persistent artifact",
+          rejected:[{name:"C-trunk",reason:"assumes user already knows which concept to study",reason_zh:"假設使用者已知該學哪個概念"},{name:"Single paradigm",reason:"no one paradigm covers the full arc",reason_zh:"單一範式涵蓋不了完整歷程"}] },
+        { id:3, question:"Macro structure: staging", question_zh:"宏觀結構：分階段", adopted:"nested staged · mentor-proposed · B two-layer", adopted_zh:"巢狀分階 · 導師提議 · B 雙層", status:"resolved", dependsOn:2, premise:"A→C→D→B loop",
+          rejected:[{name:"Flat single-pass",reason:"large goal makes A emit dozens of unfocused gaps",reason_zh:"大目標讓 A 噴出數十個失焦缺口"}] },
+        { id:4, question:"C: literature sourcing & guided reading", question_zh:"C：文獻來源與導讀", adopted:"live-sourced · vetted · laddered · section-by-section", adopted_zh:"即時搜尋 · 審核 · 階梯式 · 逐段", status:"resolved", dependsOn:2, premise:"A→C→D→B loop",
+          rejected:[{name:"Direct primary-source assault",reason:"#1 cause of read-but-gave-up for jargon-blind learner",reason_zh:"術語零基礎者讀不懂而放棄的頭號主因"}] },
+        { id:5, question:"A: gap-surfacing", question_zh:"A：缺口浮現", adopted:"back-cast · hands-on stumble · stop-when-enough", adopted_zh:"回推 · 動手卡關 · 夠了就停", status:"resolved", dependsOn:3, premise:"nested staged",
+          rejected:[{name:"User self-assesses prereqs",reason:"can't surface unknown unknowns",reason_zh:"無法浮現未知的未知"}] },
+        { id:6, question:"D: impl gate & conditional withholding", question_zh:"D：實作關卡與條件保留", adopted:"withhold exactly the skill the goal targets", adopted_zh:"只保留目標所指的那項技能", status:"resolved", dependsOn:2, premise:"A→C→D→B loop",
+          rejected:[{name:"Absolute 'user writes everything'",reason:"over-withholds when code isn't the target",reason_zh:"當程式碼非目標時過度保留"}] },
+        { id:7, question:"Per-stage withhold target", question_zh:"每階段的保留目標", adopted:"theory→pseudo-code · syntax→real code", adopted_zh:"理論→偽碼 · 語法→真實程式碼", status:"resolved", dependsOn:3, premise:"nested staged",
+          rejected:[{name:"Single global classification",reason:"conflates theory and implementation stages",reason_zh:"混淆理論階段與實作階段"}] },
+        { id:8, question:"B: teach-back as lean diagnostic", question_zh:"B：教回去作為輕量診斷", adopted:"lean diagnostic · C = recovery hub", adopted_zh:"輕量診斷 · C＝復原樞紐", status:"resolved", dependsOn:2, premise:"A→C→D→B loop",
+          rejected:[{name:"Heavyweight terminal exam gate",reason:"over-weights B; priority is reading-to-mastery",reason_zh:"過度看重 B；優先是讀到精通"}] },
+        { id:9, question:"Persistence schema & location", question_zh:"持久化結構與位置", adopted:"per-goal MD in repo docs/learning/", adopted_zh:"每目標一個 MD，放 repo docs/learning/", status:"resolved", dependsOn:1, premise:"persistent artifact",
+          rejected:[{name:"Dual-mode repo+global",reason:"branching with no payoff",reason_zh:"多一個分支卻無收益"},{name:"Global-only",reason:"separates learning from the project",reason_zh:"把學習與專案分離"}] },
+        { id:10, question:"Entry & resumption", question_zh:"進入點與續接", adopted:"free-form · auto-scan resume · optional task", adopted_zh:"自由輸入 · 自動掃描續接 · 任務可選", status:"resolved", dependsOn:9, premise:"per-goal MD in docs/learning/",
+          rejected:[{name:"Rigid form + manual resume prompt",reason:"friction against lightweight style",reason_zh:"與輕量風格相牴觸的摩擦"}] },
+        { id:11, question:"Packaging & ecosystem wiring", question_zh:"封裝與生態接線", adopted:"learn-mentor · reuse grill-me · web search · →write-a-skill", adopted_zh:"learn-mentor · 復用 grill-me · 網搜 · →write-a-skill", status:"resolved", dependsOn:1, premise:"new standalone skill",
+          rejected:[{name:"Auto-couple record-adr / fresh engine",reason:"semantics don't match ADRs; grill-me core reusable",reason_zh:"語意與 ADR 不符；grill-me 核心可直接復用"}] }
+      ],
+      edges: [
+        { from:7, to:6, kind:"feeds", label:"mastery-type → withhold ／ 精通型別決定保留" },
+        { from:7, to:8, kind:"feeds", label:"withhold output = teach-back ／ 保留產出即教回去素材" },
+        { from:8, to:4, kind:"failure", label:"on failure → back to C ／ 失敗回流到 C" }
+      ]
+    };
+    // ===========================================================================
+    //  Reusable renderer — do not edit per session.
+    // ===========================================================================
+    const NW = 250, NH = 124, COL_W = 320, ROW_H = 164, PAD = 28;
+    const EKIND = {
+      backbone:   { color:"#475569", dash:"none" },
+      feeds:      { color:"#a78bfa", dash:"6 5" },
+      supersedes: { color:"#fbbf24", dash:"6 5" },
+      failure:    { color:"#fb7185", dash:"6 5" }
+    };
+
+    function layout() {
+      const byId = {}; GRAPH.nodes.forEach(n => byId[n.id] = n);
+      // backbone children from dependsOn
+      const layerOf = {};
+      function depth(n) {
+        if (layerOf[n.id] != null) return layerOf[n.id];
+        return layerOf[n.id] = (n.dependsOn == null ? 0 : depth(byId[n.dependsOn]) + 1);
+      }
+      GRAPH.nodes.forEach(depth);
+      // group by layer, order by id, assign rows
+      const layers = {};
+      GRAPH.nodes.forEach(n => (layers[layerOf[n.id]] ||= []).push(n));
+      Object.values(layers).forEach(col => col.sort((a,b)=>a.id-b.id));
+      const pos = {};
+      Object.keys(layers).forEach(L => layers[L].forEach((n,row) => {
+        pos[n.id] = { x: PAD + L*COL_W, y: PAD + row*ROW_H };
+      }));
+      const cols = Object.keys(layers).length;
+      const rows = Math.max(...Object.values(layers).map(c=>c.length));
+      const gutter = GRAPH.edges.length ? 190 : 0;   // right lane for overlay (feeds/supersedes/failure) edges + labels
+      return { byId, pos, layerOf, width: PAD*2 + (cols-1)*COL_W + NW + gutter, height: PAD*2 + (rows-1)*ROW_H + NH };
+    }
+
+    function edgePath(a, b, kind) {
+      // backbone: right edge → left edge, horizontal bezier
+      if (kind === "backbone") {
+        const x1=a.x+NW, y1=a.y+NH/2, x2=b.x, y2=b.y+NH/2, dx=(x2-x1)/2;
+        return `M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`;
+      }
+      // overlay: right-edge → right-edge, bulged into the right gutter so it never crosses a node
+      const x1=a.x+NW, y1=a.y+NH/2, x2=b.x+NW, y2=b.y+NH/2, cx=Math.max(x1,x2)+Math.max(48,Math.abs(y2-y1)/2);
+      return `M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`;
+    }
+
+    function render() {
+      document.getElementById('title').textContent = META.title;
+      const { byId, pos, width, height } = layout();
+      const stage = document.getElementById('stage');
+      const svg = document.getElementById('edges');
+      svg.setAttribute('width', width); svg.setAttribute('height', height);
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      stage.style.width = width + 'px'; stage.style.height = height + 'px';
+
+      // markers + edges
+      let defs = '<defs>';
+      Object.entries(EKIND).forEach(([k,v]) =>
+        defs += `<marker id="ah-${k}" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><polygon points="0 0, 9 3.5, 0 7" fill="${v.color}"/></marker>`);
+      defs += '</defs>';
+      let paths = '';
+      const allEdges = GRAPH.nodes.filter(n=>n.dependsOn!=null).map(n=>({from:n.dependsOn,to:n.id,kind:"backbone",label:"assumed:"+(n.premise||"")}))
+        .concat(GRAPH.edges);
+      allEdges.forEach(e => {
+        const a=pos[e.from], b=pos[e.to], v=EKIND[e.kind]; if(!a||!b) return;
+        paths += `<path d="${edgePath(a,b,e.kind)}" fill="none" stroke="${v.color}" stroke-width="1.6" stroke-dasharray="${v.dash}" marker-end="url(#ah-${e.kind})" opacity="${e.kind==='backbone'?0.9:0.85}"/>`;
+        if (e.label && e.kind!=='backbone') {
+          const y1=a.y+NH/2, y2=b.y+NH/2, cx=Math.max(a.x,b.x)+NW+Math.max(48,Math.abs(y2-y1)/2);
+          const my=(y1+y2)/2, w=e.label.length*5.4+10;
+          paths += `<rect x="${cx-w/2}" y="${my-8}" width="${w}" height="14" rx="3" fill="#0b1220" stroke="${v.color}" stroke-opacity="0.4"/>`;
+          paths += `<text x="${cx}" y="${my+2}" fill="${v.color}" font-size="9" text-anchor="middle" font-family="JetBrains Mono">${e.label}</text>`;
+        }
+      });
+      svg.innerHTML = defs + paths;
+
+      // nodes (HTML over SVG)
+      GRAPH.nodes.forEach(n => {
+        const p = pos[n.id];
+        const el = document.createElement('div');
+        el.className = 'node ' + (n.status||'resolved');
+        el.style.left = p.x + 'px'; el.style.top = p.y + 'px';
+        const rej = (n.rejected||[]);
+        el.innerHTML =
+          `<span class="idbadge">#${n.id}</span>` +
+          `<div class="q">${n.question}${n.question_zh?`<span class="qzh">${n.question_zh}</span>`:''}</div>` +
+          (n.adopted ? `<div class="adopted">✅ ${n.adopted}${n.adopted_zh?`<span class="azh"> · ${n.adopted_zh}</span>`:''}</div>` : '') +
+          (rej.length ? `<div class="rejcount">❌ ${rej.length} rejected · hover 展開</div>` : '') +
+          `<div class="detail">` +
+            (n.premise ? `<div class="premise">depends on <b>${n.premise}</b></div>` : '') +
+            (rej.length ? `<div class="rej-title">Rejected · 否決</div>` + rej.map(r=>`<div class="rej"><b>${r.name}</b> — ${r.reason}${r.reason_zh?`<br><span style="color:#94a3b8">${r.reason_zh}</span>`:''}</div>`).join('') : '<div class="rej">No rejected options recorded.</div>') +
+          `</div>`;
+        stage.appendChild(el);
+      });
+    }
+    render();
+
+    // ===========================================================================
+    //  Export toolbar — borrowed from architecture-diagram (html2canvas + jsPDF).
+    // ===========================================================================
+    function capture() {
+      const el = document.getElementById('report-container'); const r = el.getBoundingClientRect(); const pad = 32;
+      return html2canvas(document.body, { backgroundColor:'#020617', scale:2, useCORS:true,
+        ignoreElements:(e)=>e.classList&&e.classList.contains('toolbar'),
+        x:r.left+scrollX-pad, y:r.top+scrollY-pad, width:r.width+pad*2, height:r.height+pad*2 });
+    }
+    async function copyAsImage(btn){ const o=btn.textContent; try{ const c=await capture(); const b=await new Promise(r=>c.toBlob(r,'image/png')); await navigator.clipboard.write([new ClipboardItem({'image/png':b})]); btn.textContent='✓ Copied!'; }catch(e){ btn.textContent='✗ Failed'; } setTimeout(()=>btn.textContent=o,2000); }
+    async function downloadPNG(btn){ const o=btn.textContent; btn.textContent='⏳ ...'; try{ const c=await capture(); const a=document.createElement('a'); a.download='decision-graph.png'; a.href=c.toDataURL('image/png'); a.click(); btn.textContent='✓ Done!'; }catch(e){ btn.textContent='✗ Failed'; } setTimeout(()=>btn.textContent=o,2000); }
+    async function downloadPDF(btn){ const o=btn.textContent; btn.textContent='⏳ ...'; try{ const c=await capture(); const img=c.toDataURL('image/png'); const {jsPDF}=window.jspdf; const orient=c.width>c.height?'landscape':'portrait'; const pdf=new jsPDF({orientation:orient,unit:'px',format:[c.width,c.height],hotfixes:['px_scaling']}); pdf.addImage(img,'PNG',0,0,c.width,c.height); pdf.save('decision-graph.pdf'); btn.textContent='✓ Done!'; }catch(e){ btn.textContent='✗ Failed'; } setTimeout(()=>btn.textContent=o,2000); }
+  </script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 # ADR-0002 — grill-graph: a decision-graph grilling skill
 
-**Status:** Proposed
+**Status:** Proposed (Visualization decision superseded by [ADR-0005](ADR-0005-grill-graph-on-demand-mindmap-visualization.md))
 **Date:** 2026-06-05
-**Related:** —
+**Related:** [ADR-0005](ADR-0005-grill-graph-on-demand-mindmap-visualization.md)
 
 ---
 
@@ -27,7 +27,7 @@ Build a new skill, **`grill-graph`**, on top of `grill-me`'s grilling core, addi
 | Topology source of truth | ADR `parent` links (original idea) | Rejected | Most nodes never graduate; the graph would break at non-graduated nodes |
 | | **`decision-graph.md` is SSOT; ADR `Related:` is a sparse projection** | **Adopted** | Detail in the graph, durable decisions in ADRs, no drift |
 | Visualization | Time-machine / replay | Rejected | Over-built; sequential ids + supersedes edges already convey evolution |
-| | **Live embedded Mermaid (id = time axis, color = status, supersedes dashed); architecture-diagram for final panorama** | **Adopted** | Zero-build overview readable anywhere |
+| | ~~Live embedded Mermaid (id = time axis, color = status, supersedes dashed); architecture-diagram for final panorama~~ | ~~Adopted~~ **→ superseded by [ADR-0005](ADR-0005-grill-graph-on-demand-mindmap-visualization.md)** | Live Mermaid became unreadable as the graph grew; replaced by an on-demand bilingual HTML mindmap |
 | Convergence output | grill-graph does PRD/issues itself | Rejected | Re-implements existing skills |
 | | **Emit `spec.md` (⚠️ Unresolved Premises, not gated) → hand off to to-prd/to-issues** | **Adopted** | Composable; honours "stale is batch-skippable" |
 | Packaging / name | Fork grill-with-docs; replace grill-me; name "grill-me-plus" | Rejected | Inherits unneeded glossary machinery; "plus" hides the soul (graph) |
@@ -54,9 +54,9 @@ Recording dead sibling subtrees (rejected option → its own abandoned subtree) 
 
 # ADR-0002 — grill-graph：決策圖拷問 skill
 
-**狀態：** 提議中
+**狀態：** 提議中（視覺化決策已由 [ADR-0005](ADR-0005-grill-graph-on-demand-mindmap-visualization.md) 取代）
 **日期：** 2026-06-05
-**相關：** —
+**相關：** [ADR-0005](ADR-0005-grill-graph-on-demand-mindmap-visualization.md)
 
 ---
 
@@ -81,7 +81,7 @@ Matt Pocock 的 `grill-me` 擅長用連珠砲關鍵問題激發思考，但它�
 | 拓樸真相來源 | ADR `parent` 連結（最初構想） | 否決 | 多數節點不畢業，圖會在未畢業節點處斷掉 |
 | | **`decision-graph.md` 為 SSOT；ADR `Related:` 是稀疏投影** | **採納** | 細節在圖、耐久決策在 ADR、兩者不 drift |
 | 視覺化 | 時光機／回放 | 否決 | 過度設計；編號順序＋supersedes 邊已能表現演進 |
-| | **即時內嵌 Mermaid（編號=時間軸、顏色=狀態、supersedes 虛線）；定稿用 architecture-diagram** | **採納** | 零建置、任何地方都能讀的概覽 |
+| | ~~即時內嵌 Mermaid（編號=時間軸、顏色=狀態、supersedes 虛線）；定稿用 architecture-diagram~~ | ~~採納~~ **→ 由 [ADR-0005](ADR-0005-grill-graph-on-demand-mindmap-visualization.md) 取代** | live Mermaid 隨圖成長變得無法閱讀；改為按需生成的雙語 HTML 心智圖 |
 | 收斂產物 | grill-graph 自己做 PRD/issues | 否決 | 重造既有 skill |
 | | **產 `spec.md`（⚠️未解決前提、不 gate）→ 交棒 to-prd/to-issues** | **採納** | 可組合；呼應「stale 可批次跳過」 |
 | 打包／命名 | 分叉 grill-with-docs；取代 grill-me；命名 grill-me-plus | 否決 | 背上不需要的詞彙表機制；「plus」沒講出靈魂（圖） |
