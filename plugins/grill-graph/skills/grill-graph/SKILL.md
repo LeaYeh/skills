@@ -20,18 +20,22 @@ The difference from plain grilling: as decisions resolve, you maintain a **decis
 ## The artifact chain
 
 ```
-decision-graph.md   ← grown live during grilling · the topology SSOT · embedded Mermaid
+decision-graph.md   ← grown live during grilling · the topology SSOT · structured Markdown ONLY (no embedded diagram)
+   │  on demand ("show the graph") + once at convergence
+   ├─▶ decision-graph.html  ← derived view · rendered from resources/mindmap-template.html · overwritten each time
    │ converge: take adopted options of active + resolved nodes
    ▼
-spec.md             ← ⚠️ Unresolved Premises + adopted decisions (each with its rejection reason) + final panorama diagram
+spec.md             ← ⚠️ Unresolved Premises + adopted decisions (each with its rejection reason) + link to decision-graph.html
    │ hand off
    ▼
 to-prd / to-issues  ← existing skills, not re-implemented here
 ```
 
-Create `decision-graph.md` lazily — only once the first decision is resolved. Default location: repo root, or `docs/` if it exists. Write to it **inline** as decisions resolve; do not batch.
+Create `decision-graph.md` lazily — only once the first decision is resolved. Default location: repo root, or `docs/` if it exists. Write to it **inline** as decisions resolve, following the node schema in `resources/node-template.md`; do not batch. The Markdown is the single source of truth and is what the user reads *during* grilling — keep it clean and consistent, because the HTML renderer parses these fields. There is **no live diagram** to maintain (the old embedded Mermaid was unreadable as the graph grew); the visual is generated on demand instead — see Visualization.
 
 ## Data model
+
+The on-disk Markdown schema for a node lives in `resources/node-template.md` — follow it exactly so the renderer can parse it. The conceptual model:
 
 A **node** is a *resolved decision point* (not a bare question — a question carries no "why rejected", and that reason is the whole point).
 
@@ -60,7 +64,7 @@ After each answer:
 3. **Decide where the next question attaches.** A follow-up question does NOT always hang off the current node. The user may raise a counter-question that reaches back to an *arbitrary earlier node* to extend it. When that happens, attach the new node to the node it actually depends on, not the frontier.
 4. **Detect re-assumption.** If an answer reopens an earlier decision (changes its adopted option), see the next section.
 5. **Surface the stale queue** (advisory — see below) before moving to genuinely new ground.
-6. **Update the embedded Mermaid diagram** so the live overview stays current.
+6. **Keep the Markdown clean** — the node block (step 1) is the only live artifact. Do not render a diagram every turn; the visual is on demand (see Visualization). If the user asks to "show the graph" mid-session, render `decision-graph.html` then.
 
 Rejected options rarely sprout their own subtree — when one does and is later dropped, mark that subtree `abandoned`. The common and important case is back-references and re-assumptions, not dead sibling subtrees. Don't over-model dead siblings.
 
@@ -80,28 +84,35 @@ When a node graduates, invoke the **record-adr** skill. The ADR's `Related:` fie
 
 ## Visualization
 
-`decision-graph.md` embeds a Mermaid `graph TD`, refreshed live (the simple, zero-build overview the user reads any time). Encoding:
+The visual is **on demand, never live**. During grilling the user reads the structured Markdown
+(`decision-graph.md`) — that is the SSOT and it is genuinely readable. A diagram is rendered only
+when the user asks ("show the graph") or once at convergence. The old approach — a Mermaid `graph TD`
+refreshed every turn — became unreadable spaghetti once the graph grew past a handful of cross-edges,
+so it has been removed.
 
-- **Node label** = `#<id> <short question><br/>✅ <adopted option>`
-- **Number = time axis** — there is no time-machine/replay; sequential ids carry the evolution.
-- **Color = status:** active = blue fill, stale = grey dashed, graduated = gold border.
-- **Edge label** = `assumed:<option>` so each dependency shows the premise it stands on.
-- **`-.supersedes.->`** dashed edge from an old node to its re-assumed replacement, preserving "we once thought this".
+**How to render.** Copy `resources/mindmap-template.html` to `decision-graph.html` (alongside
+`decision-graph.md`) and replace the single `GRAPH` data block — nothing else. Each `### #N` node
+block maps to one node object; `Depends on` becomes a `backbone` edge, and `Feeds`/supersedes/failure
+become overlay edges. The exact mapping is documented in `resources/node-template.md`. The renderer
+is data-driven: it auto-lays-out an **L→R layered tree** (the single-parent `dependsOn` backbone) and
+draws cross-edges as coloured dashed overlays — so you never hand-place coordinates, and the output is
+consistent every time. Overwrite `decision-graph.html` on each render; it is a derived view, not SSOT.
 
-```mermaid
-graph TD
-  N1["#1 branch = ADR?<br/>✅ lightweight node"]:::active
-  N2["#2 node/edge semantics"]:::active
-  N1 -->|assumed:lightweight| N2
-  N1b["#1' reopen: graduate all?"]:::stale
-  N1 -.supersedes.-> N1b
-  N1b -.makes stale.-> N2
-  classDef active fill:#1f6feb,color:#fff
-  classDef stale fill:#444,color:#999,stroke-dasharray:5
-  classDef graduated stroke:#f0b429,stroke-width:3px
-```
+**Encoding (built into the template):**
 
-For a polished final panorama at convergence time, invoke the **architecture-diagram** skill and save the output alongside `spec.md`.
+- **Layout** — backbone (`dependsOn`) = a clean left-to-right tree; cross-edges (`feeds` / `supersedes`
+  / `failure`) = coloured dashed curves layered on top. This is the "mindmap backbone + DAG overlay"
+  hybrid: DAG semantics preserved, readability restored.
+- **Node face** = `#<id>` badge + short question + `✅ adopted option`. Long detail is **not** on the
+  face; **hover** a node to expand its rejected options (with reasons) and the premise it depends on.
+- **Number = time axis** — sequential ids carry the evolution; no replay needed.
+- **Colour = status** — active = blue, stale = grey dashed + dimmed, graduated = gold, abandoned = faded.
+- **Export** — the built-in toolbar (`⋯`) copies/saves PNG or PDF (a clean static snapshot; hover detail
+  lives in the Markdown SSOT anyway).
+
+This template is a **fork** of the architecture-diagram design system (dark theme, JetBrains Mono,
+self-contained HTML, export toolbar) — grill-graph owns its own decision-semantics encoding and does
+**not** invoke the architecture-diagram skill.
 
 ## Convergence
 
@@ -109,9 +120,16 @@ When the user calls for convergence, walk the DAG and emit `spec.md`:
 
 1. **⚠️ Unresolved Premises** (top of file) — list every `stale` or unanswered node. Convergence is NOT gated on these; surface them, don't block. This mirrors the "stale is batch-skippable" philosophy.
 2. **Adopted decisions** in dependency order — each adopted option with a one-line "chosen because … / rejected …" rationale carried from the node.
-3. **Final panorama** — the embedded (or architecture-diagram) graph.
+3. **Final panorama** — render `decision-graph.html` from `resources/mindmap-template.html` (see Visualization) and link it from `spec.md`.
 
 Then hand off: offer **to-prd** or **to-issues** to take `spec.md` downstream. Do not re-implement PRD/issue generation here.
+
+## Resources
+
+Two bundled templates under `resources/` crystallise the format so neither the Markdown nor the diagram is improvised per session:
+
+- **`node-template.md`** — the fixed Markdown node schema for `decision-graph.md` (the live SSOT). Field order is load-bearing: it maps mechanically to the renderer's `GRAPH` JSON.
+- **`mindmap-template.html`** — the on-demand visual: a self-contained, data-driven renderer (L→R layered-tree auto-layout, SVG edge layer + HTML node layer with hover-to-expand detail, export toolbar). Per session you replace only its `GRAPH` data block. A fork of the architecture-diagram design system; it does not invoke that skill.
 
 ## Relationship to sibling skills
 
