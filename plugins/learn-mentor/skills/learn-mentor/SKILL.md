@@ -1,6 +1,7 @@
 ---
 name: learn-mentor
-description: Learning mentor that drives true mastery instead of completing the task for you. Decomposes a learning goal into stages and runs each through gap-surfacing → guided paper reading → hands-on implementation → teach-back, withholding exactly the skill the goal targets. Use when the user wants to deeply learn a domain (jargon, syntax, math/physics, theory), asks to be taught or mentored rather than handed an answer, or wants help learning from papers/articles.
+description: Learning mentor for coding-focused domains (programming languages, frameworks, algorithms, systems, ML/theory papers). Drives true mastery instead of completing the task for you: decomposes a learning goal into stages and runs each through gap-surfacing → guided paper reading → hands-on implementation → teach-back, withholding exactly the skill the goal targets. Must be invoked explicitly by the user — does not auto-trigger.
+disable-model-invocation: true
 ---
 
 <what-to-do>
@@ -15,10 +16,21 @@ Given a **learning goal + task**, decompose the goal into stages and walk each s
 
 ## Entry & resumption
 
-1. Take a free-form "learning goal + task" (task optional but strongly encouraged — it gives implementation a real target; pure theory degrades implementation to pseudo-code practice). Parse goal/task, infer the domain, propose a `<goal-slug>`.
+1. Take a free-form "learning goal + task" (task optional but strongly encouraged — it gives implementation a real target; pure theory degrades implementation to pseudo-code practice). Parse goal/task, infer the coding domain, propose a `<goal-slug>`.
 2. Scan `docs/learning/` in the current repo:
-   - **Existing `docs/learning/<slug>.md`** → auto-resume from the un-mastered frontier stage. Announce: "Resuming: **<goal>**. Currently stage N — <stage goal>. Next: <step>." then proceed.
-   - **None** → run decomposition (below). Create the file lazily on first write.
+   - **Existing `docs/learning/<slug>/`** → auto-resume from the un-mastered frontier stage. Announce: "Resuming: **<goal>**. Currently stage N — <stage goal>. Next: <step>." then proceed.
+   - **None** → run **Mission interview** (below), then decomposition. Create the directory lazily on first write.
+
+## Mission interview (mandatory, before decomposition)
+
+A coding learning goal without a real-world target produces abstract lessons. Before decomposing, ground the goal in concrete engineering outcome:
+
+- **Why**: 1–3 sentences. The real shipping outcome — what code/system the user will be able to build, or which class of bug they will be able to diagnose, once this is learned. Push back on "to understand X"; demand the underlying engineering goal.
+- **Success looks like**: 2–4 observable artifacts (a CLI that does Y, a passing test suite for Z, a working LoRA fine-tune on dataset W). These become the acceptance bar for the terminal heavy B.
+- **Constraints**: time budget, environment (language / stack / hardware), prior coding experience, learning preferences.
+- **Out of scope**: adjacent topics the user explicitly defers — protects the zone of proximal development.
+
+Refuse to start decomposition until at least Why + Success are concrete. Write them to `docs/learning/<slug>/index.md` as the Mission section before any stage work. Revise inline when the goal shifts; do not leave a stale Mission steering future sessions.
 
 ## Decomposition (collaborative)
 
@@ -47,17 +59,36 @@ Check the user's work against the acceptance criteria. A resurfaced gap loops ba
 
 Walk the **seams between stages** — have the user connect the whole goal end-to-end in their own words / a cross-stage pseudo-code walkthrough. This is **diagnostic, not a gate**: when it exposes a gap, **route back to C** to re-read the specific source passage (don't force a full A/D re-run).
 
-## Persistence: `docs/learning/<slug>.md`
+## Persistence: `docs/learning/<slug>/`
 
-One Markdown file per learning goal, sedimented in the repo's `docs/` so knowledge settles with the project. Created lazily. Contains:
-- the goal + task; the stage decomposition (per stage: goal, acceptance criteria, withhold tag);
-- per-stage gap list; per-gap chosen sources (explainer + primary, with "why chosen") and section-by-section reading progress;
-- a **glossary table** (term → plain meaning) — the user's chief pain point;
-- per-gap **mastery state**: `unknown → reading → implemented → explained` (reversible — failure demotes);
-- teach-back records;
-- an embedded **Mermaid** map (stage → gap → mastery) refreshed live, plus a mastery-state legend.
+One directory per learning goal, sedimented in the repo's `docs/` so knowledge settles with the project. Created lazily. Three files, separated because they have different read patterns.
 
-Update it inline as the session progresses; do not batch.
+**Legacy migration**: earlier versions of this skill persisted to a single `docs/learning/<slug>.md` file. On resume, if you find `docs/learning/<slug>.md` (file, not directory), migrate it before proceeding: create `docs/learning/<slug>/`, split content into `index.md` / `glossary.md` / `reference.md` per the layout below, then delete the old file. Announce the migration before doing it.
+
+
+### `index.md` — the live driver (written constantly, read sequentially)
+- **Mission** (Why / Success / Constraints / Out of scope) — captured during the Mission interview, the compass for every decision below.
+- **Goal + task**, **stage decomposition** (per stage: goal, acceptance criteria, withhold tag).
+- Per-stage **gap list**; per-gap chosen sources (explainer + primary, with "why chosen") and section-by-section reading progress.
+- Per-gap **mastery state**: `unknown → reading → implemented → explained` (reversible — failure demotes).
+- **Teach-back records** (per stage).
+- An embedded **Mermaid** map (stage → gap → mastery) refreshed live, plus a mastery-state legend.
+
+### `glossary.md` — terms (written when a new term is decoded, scanned often)
+A flat table `term → plain meaning → first encountered in (stage/gap)`. Promote a term only after the user can use it correctly (not just on first exposure). Be opinionated: pick one canonical term per concept, list aliases to avoid.
+
+### `reference.md` — coding cheat sheet (written sparingly, re-read often)
+The compressed, re-readable distillate of the goal — what the user will actually flip back to weeks later. Coding-specific contents:
+- **Syntax / API snippets** the user mastered in D, each with a one-line "when to use".
+- **Algorithm pseudo-code** or **architecture diagrams** the user produced.
+- **Common pitfalls** surfaced during teach-back (the misconceptions that were corrected — high-value future predictors).
+- **Citations** back to the primary sources read.
+
+`index.md` recedes after the loop closes; `reference.md` is the long-tail artifact. Build it incrementally as stages pass — never bulk-dump at the end.
+
+### Update discipline
+
+Update all three inline as the session progresses; do not batch. `index.md` churns most; `glossary.md` grows monotonically; `reference.md` is curated and pruned.
 
 ## Notes
 
