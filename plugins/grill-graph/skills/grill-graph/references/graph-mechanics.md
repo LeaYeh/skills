@@ -44,17 +44,7 @@ Rejected options rarely sprout their own subtree; when one did and was later dro
 subtree `abandoned`. Don't over-model dead siblings — the cases that matter are back-references and
 re-assumptions.
 
-### 3. Emit `spec.md`
-
-1. **⚠️ Unresolved Premises** (top of file) — every `stale` or unanswered node, i.e. the revisit
-   list from step 2. Convergence is **not** gated on these; surface them, don't block. Present them as
-   "these premises changed; revisit or keep as-is?" — the user may batch-skip all of them, and skipped
-   nodes stay `stale` and stay visible.
-2. **Adopted decisions** in dependency order — each adopted option with a one-line
-   "chosen because … / rejected … because …" rationale carried straight from the node.
-3. **Final panorama** — link `decision-graph.html` (rendered in step 4).
-
-### 4. Render the graph — once
+### 3. Render the graph — once
 
 Copy `resources/mindmap-template.html` to `decision-graph.html` (alongside the Markdown) and replace
 **only** the `GRAPH` data block. Mapping: each `### #N` node → one node object; the "builds on" /
@@ -67,6 +57,16 @@ Encoding (built into the template): node face = `#id` badge + short question + �
 rejected options and the assumed premise shown on hover; number = time axis; colour = status (active
 blue, stale grey-dashed + dimmed, graduated gold, abandoned faded); export via the `⋯` toolbar. The
 template is a fork of the architecture-diagram design system and does **not** invoke that skill.
+
+### 4. Emit `spec.md`
+
+1. **⚠️ Unresolved Premises** (top of file) — every `stale` or unanswered node, i.e. the revisit
+   list from step 2. Convergence is **not** gated on these; surface them, don't block. Present them as
+   "these premises changed; revisit or keep as-is?" — the user may batch-skip all of them, and skipped
+   nodes stay `stale` and stay visible.
+2. **Adopted decisions** in dependency order — each adopted option with a one-line
+   "chosen because … / rejected … because …" rationale carried straight from the node.
+3. **Final panorama** — link `decision-graph.html` (rendered in step 3).
 
 ### 5. Graduate ADRs (only the few that earn it)
 

@@ -41,3 +41,6 @@ Do **not** wire edges, propagate staleness, or render anything mid-session.
 When the user calls for convergence, **read `references/graph-mechanics.md` and follow it**. That is
 the only moment the heavy work runs — wiring dependencies, propagating the `Reopens` flags into stale
 premises, rendering the graph once, and emitting `spec.md`. Don't load that file before then.
+
+Convergence produces **two artifacts side by side: `decision-graph.html` and `spec.md`**. Neither one
+alone is convergence — emit both or you haven't converged.
