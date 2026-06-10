@@ -21,6 +21,7 @@ Then install individual skills:
 | [commit-splitter](plugins/commit-splitter) | Scan pending changes and produce an ordered conventional-commit plan; confirms before any git write |
 | [grill-graph](plugins/grill-graph) | Heavyweight grilling that records the decision tree as a live graph — rejected branches, re-assumptions, back-references — then converges it into a spec |
 | [learn-mentor](plugins/learn-mentor) | Learning mentor that drives true mastery of a topic instead of completing the task for you — decomposes a learning goal into stages and runs each through gap-surfacing, guided paper reading, hands-on implementation, and teach-back, withholding exactly the skill the goal targets |
+| [spec-align](plugins/spec-align) | Single entry point for requirements → architecture alignment — Phase 1 grills the product owner into BDD scenarios, Phase 2 grills the SWE on architecture and records an SDD |
 
 ## Adding a New Skill
 

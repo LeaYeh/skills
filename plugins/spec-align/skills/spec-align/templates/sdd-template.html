@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SDD: {{PROJECT_NAME}}</title>
+<!--
+  FILLING RULES (delete all comments in the final artifact):
+  - Replace every {{PLACEHOLDER}}. Never leave a placeholder unfilled — use "none" or "n/a".
+  - Do NOT add, remove, rename, or reorder sections or table columns.
+  - Scenario IDs (S1, S2, …) must match the BDD artifact exactly.
+  - Multiple clauses in one cell are separated with <br>.
+  - All content in English only.
+  - Downstream conversion: pandoc {file}.html -o {file}.docx
+-->
+</head>
+<body>
+
+<h1>SDD: {{PROJECT_NAME}}</h1>
+
+<table border="1">
+  <tbody>
+    <tr><th align="left">Date</th><td>{{YYYY-MM-DD}}</td></tr>
+    <tr><th align="left">Status</th><td>draft</td></tr>
+    <tr><th align="left">Driver</th><td>{{customer request | grant | internal}}</td></tr>
+    <tr><th align="left">Deadline</th><td>{{YYYY-MM-DD or "none"}}</td></tr>
+  </tbody>
+</table>
+
+<h2>Context</h2>
+<p>{{from BDD}}</p>
+
+<h2>Goal</h2>
+<p>{{primary scenario in one plain-English sentence}}</p>
+
+<h2>BDD scenarios</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Scenario</th>
+      <th>Given</th>
+      <th>When</th>
+      <th>Then</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- copy all confirmed scenarios verbatim from the BDD artifact, one row each -->
+    <tr>
+      <td>S1</td>
+      <td>{{short name}}</td>
+      <td>{{the starting context}}</td>
+      <td>{{the user or system action}}</td>
+      <td>{{the observable outcome}}<br>{{additional outcome if needed}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Scope</h2>
+
+<table border="1">
+  <tbody>
+    <tr>
+      <th align="left">In</th>
+      <td>{{deliverables derived from scenarios}}</td>
+    </tr>
+    <tr>
+      <th align="left">Out</th>
+      <td>{{explicit exclusions decided during the grill}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Component design</h2>
+<p>{{which modules change, what is new}}</p>
+
+<h2>HW/SW interface</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Data format</th>
+      <th>Sample rate</th>
+      <th>Timing</th>
+      <th>Protocol</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- one row per scenario that touches hardware; if none, a single row of "n/a" -->
+    <tr>
+      <td>S1</td>
+      <td>{{data format}}</td>
+      <td>{{sample rate}}</td>
+      <td>{{timing}}</td>
+      <td>{{protocol}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Data flow</h2>
+<p>{{input → processing → output for the primary scenario}}</p>
+
+<h2>Acceptance criteria</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Scenario</th>
+      <th>Verification</th>
+      <th>Pass condition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- exactly one row per BDD scenario -->
+    <tr>
+      <td>S1</td>
+      <td>{{manual | automated | customer sign-off}}</td>
+      <td>{{measurable pass condition, not subjective}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Open questions</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Question</th>
+      <th>Owner</th>
+      <th>Due</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- one row per open question; if none, a single row of "none" -->
+    <tr>
+      <td>{{question}}</td>
+      <td>{{owner}}</td>
+      <td>{{YYYY-MM-DD or "n/a"}}</td>
+    </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

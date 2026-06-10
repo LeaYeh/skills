@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BDD: {{PROJECT_NAME}}</title>
+<!--
+  FILLING RULES (delete all comments in the final artifact):
+  - Replace every {{PLACEHOLDER}}. Never leave a placeholder unfilled — use "none" or "n/a".
+  - Do NOT add, remove, rename, or reorder sections or table columns.
+  - One <tr> per confirmed scenario; duplicate the marked row as needed.
+  - Multiple Given/When/Then clauses in one cell are separated with <br>.
+  - All content in English only.
+  - Downstream conversion: pandoc {file}.html -o {file}.docx
+-->
+</head>
+<body>
+
+<h1>BDD: {{PROJECT_NAME}}</h1>
+
+<table border="1">
+  <tbody>
+    <tr><th align="left">Date</th><td>{{YYYY-MM-DD}}</td></tr>
+    <tr><th align="left">Driver</th><td>{{customer request | grant | internal}}</td></tr>
+    <tr><th align="left">Deadline</th><td>{{YYYY-MM-DD or "none"}}</td></tr>
+    <tr><th align="left">Role</th><td>{{product owner's role}}</td></tr>
+    <tr><th align="left">Context</th><td>{{1–2 sentences about who uses this and why}}</td></tr>
+  </tbody>
+</table>
+
+<h2>Confirmed scenarios</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Scenario</th>
+      <th>Given</th>
+      <th>When</th>
+      <th>Then</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- repeat this row once per confirmed scenario -->
+    <tr>
+      <td>S1</td>
+      <td>{{short name}}</td>
+      <td>{{the starting context}}</td>
+      <td>{{the user or system action}}</td>
+      <td>{{the observable outcome}}<br>{{additional outcome if needed}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Open constraints</h2>
+
+<ul>
+  <!-- repeat one <li> per hard constraint; if none, a single <li>none</li> -->
+  <li>{{hard constraint mentioned during the interview}}</li>
+</ul>
+
+</body>
+</html>

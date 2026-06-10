@@ -1,0 +1,7 @@
+{
+  "name": "spec-align",
+  "description": "Single entry point for structured requirements → architecture alignment. Phase 1 grills the product owner to extract BDD scenarios; Phase 2 grills the SWE on architecture and records the result as an SDD.",
+  "author": { "name": "Lea Yeh" },
+  "category": "development",
+  "homepage": "https://github.com/LeaYeh/skills"
+}
