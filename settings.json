@@ -1,4 +1,5 @@
 {
+  "model": "claude-sonnet-4-6",
   "hooks": {
     "SessionStart": [
       {
@@ -46,7 +47,8 @@
     "record-adr@leayeh-skills": true,
     "architecture-diagram@leayeh-skills": true,
     "init-project@leayeh-skills": true,
-    "understand-anything@understand-anything": true
+    "understand-anything@understand-anything": true,
+    "superpowers@superpowers-marketplace": true
   },
   "extraKnownMarketplaces": {
     "appleboy-skills": {
@@ -71,6 +73,12 @@
       "source": {
         "source": "github",
         "repo": "Lum1104/Understand-Anything"
+      }
+    },
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
       }
     }
   },
