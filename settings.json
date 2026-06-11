@@ -48,7 +48,8 @@
     "architecture-diagram@leayeh-skills": true,
     "init-project@leayeh-skills": true,
     "understand-anything@understand-anything": true,
-    "superpowers@superpowers-marketplace": true
+    "superpowers@superpowers-marketplace": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "appleboy-skills": {
