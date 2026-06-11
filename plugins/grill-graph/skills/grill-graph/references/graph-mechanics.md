@@ -1,10 +1,10 @@
 # graph-mechanics — convergence-only
 
 Read this **only when the user calls for convergence**. During grilling it must stay out of context:
-the whole point of the foreground/background split is that none of this dilutes the interrogation.
-By now `decision-graph.md` holds a flat list of nodes (each with adopted/rejected options + reasons,
-a "builds on" line, and possibly `Reopens #N` flags). This file turns that into wired topology,
-a single rendered diagram, and `spec.md`.
+the whole point of the foreground/track split is that none of this dilutes the interrogation.
+By now `decision-graph.md` has just been written in one shot from the in-context nodes — a flat list
+(each with adopted/rejected options + reasons, a "builds on" line, and possibly `Reopens #N` flags).
+This file turns that into wired topology, a single rendered diagram, and `spec.md`.
 
 ## Data model
 
@@ -28,7 +28,7 @@ Run these once, in order.
 
 ### 1. Wire dependencies
 
-Per-turn recording appended each node's "builds on" line against the frontier by default. Now fix it:
+Each node's "builds on" line was set against the frontier at the time it was tracked, by default. Now fix it:
 a follow-up doesn't always hang off the previous node — the user may have reached back to extend an
 *arbitrary earlier* node. Re-point each edge to the node it actually depends on, and tag it with the
 `assumed_option` it relied on.
