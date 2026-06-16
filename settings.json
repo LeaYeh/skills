@@ -47,6 +47,9 @@
     "record-adr@leayeh-skills": true,
     "architecture-diagram@leayeh-skills": true,
     "init-project@leayeh-skills": true,
+    "spec-align@leayeh-skills": true,
+    "blog@leayeh-skills": true,
+    "stop-slop@leayeh-skills": true,
     "understand-anything@understand-anything": true,
     "superpowers@superpowers-marketplace": true,
     "swift-lsp@claude-plugins-official": true
@@ -80,6 +83,12 @@
       "source": {
         "source": "github",
         "repo": "obra/superpowers-marketplace"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
       }
     }
   },

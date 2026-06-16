@@ -1,0 +1,8 @@
+{
+  "name": "stop-slop",
+  "description": "Remove AI writing patterns from prose — cut filler, break formulaic structures, score on 5 dimensions. Use when drafting, editing, or reviewing text to eliminate predictable AI tells",
+  "author": { "name": "Hardik Pandya", "url": "https://hvpandya.com" },
+  "category": "productivity",
+  "homepage": "https://github.com/hardikpandya/stop-slop",
+  "license": "MIT"
+}
