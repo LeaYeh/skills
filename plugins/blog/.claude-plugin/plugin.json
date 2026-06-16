@@ -1,0 +1,7 @@
+{
+  "name": "blog",
+  "description": "Interactively distill a valuable session into a bilingual (zh + en) technical blog post and stage it as a draft in the lyeh-infra Hugo blog",
+  "author": { "name": "Lea Yeh" },
+  "category": "productivity",
+  "homepage": "https://github.com/LeaYeh/skills"
+}
