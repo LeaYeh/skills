@@ -19,7 +19,10 @@ Single entry point for the full requirements → architecture workflow.
 - Args contain BDD artifact(s) (`## BDD:` block, `*.bdd.html` path, or pasted BDD HTML) + SWE plan notes → Phase 2 (architecture design)
 - Args contain only BDD artifact(s), no plan → ask for SWE plan before starting Phase 2
 
-Read `spec-align.config.json` from the workspace root before anything else.
+Read `spec-align.config.json` from the workspace root before anything else. Relevant keys:
+`team.{swe,hwe}.github` (issue assignees). Graduated ADRs are **not** written here — they
+live in the implementing code repo's `adr/` (record-adr's default), graduated downstream;
+see Phase 2 step 2.
 
 > **Output format — template-locked.** Every BDD and SDD artifact is produced by
 > filling the HTML templates bundled with this skill:
@@ -141,25 +144,42 @@ Before grilling the plan, check every scenario:
 
 Flag each problem explicitly before continuing.
 
-### Step 2 — Grill the SWE plan
+### Step 2 — Grill the architecture (challenge it, don't transcribe it)
 
-One question at a time. For every design decision, ask:
-> "Which BDD scenario does this serve?"
+One question at a time. Every question **challenges the design — you are trying to break
+it**, not record it. Still tie each decision to a scenario ("Which BDD scenario does this
+serve?") and flag scope creep (plan element with no scenario) and gaps (scenario with no
+coverage) — but the core of the grill is adversarial pressure on the architecture along
+the **IEEE 1016 design viewpoints** the SDD records:
 
-Flag scope creep (plan element with no corresponding scenario) and gaps (BDD scenario
-with no plan coverage) explicitly.
-
-Cover these areas in order:
-
-1. **Component breakdown** — which existing modules change, what new ones are needed
-2. **HW/SW interface** — for each scenario touching hardware: data format, sample rate,
-   timing, protocol
-3. **Data flow** — from input to user-visible output for the primary scenario
-4. **Error handling** — what happens when each scenario fails
-5. **Out of scope** — what the BDD does NOT require that might be tempting to build
+1. **Composition viewpoint** — challenge the decomposition into design entities.
+   > "Why is this one entity and not two? Why these and not fewer?"
+   > "State each entity's single responsibility without using 'and' — if you can't, the
+   > boundary is wrong."
+   > "What forces these two to be separate / forces them together?"
+2. **Interface viewpoint** — challenge each boundary contract.
+   > "Give me the exact signature: operation, parameter types, return type, errors."
+   > "Can a consumer use this without reading its internals? If you change the internals,
+   > does the signature still hold?"
+   > "What happens at this boundary when the input is malformed or out of range?"
+3. **Interaction viewpoint (data flow)** — challenge the flow.
+   > "Trace the typed payload from input to user-visible output — what type crosses each
+   > boundary?"
+   > "Where does this flow break under failure or load? What is the error / back-pressure
+   > path?"
+4. **HW/SW interface** — for each scenario touching hardware: data format, sample rate,
+   timing, protocol — and what happens when the signal is out of spec.
+5. **Out of scope** — what the BDD does NOT require that this architecture is tempted to
+   build.
 
 For every contradiction between the plan and a BDD constraint, state it explicitly:
 > "Your plan assumes X. BDD constraint says Y. Which takes precedence?"
+
+**Capture the selection — do not discard it.** Each time a decision resolves in favour
+of one option over others, record the rejected alternative(s) and the one-line reason
+*immediately*. That reasoning is alive only in the moment of the grill; if you do not
+capture it now it evaporates. It is the raw material for the SDD's **Architecture
+Decisions** section and for the ADR(s) graduated at output. (See `adr/ADR-0006`.)
 
 Do not move to output until all five areas are confirmed and no contradictions remain.
 
@@ -178,12 +198,38 @@ Reject vague criteria. "Works correctly" is not acceptable.
 
 Fill `templates/sdd-template.html` per its FILLING RULES and save to
 `document/docs/specs/{project-name}.sdd.html`. **Write every field in English** —
-scenarios, component design, data flow, acceptance criteria, open questions.
+scenarios, architecture design (IEEE 1016 viewpoints), architecture decisions,
+acceptance criteria, open questions.
 
 - Section order and table columns come from the template — do not deviate.
 - The **BDD scenarios** table copies all confirmed scenarios verbatim from the BDD
   artifact, same IDs, one row each.
+- The **Architecture design** section is structured as **IEEE 1016 design viewpoints**
+  and is the heart of the contract — fill all three:
+  - *Composition viewpoint* — decomposition into design entities; each row names one
+    entity, its single responsibility, and what it depends on.
+  - *Interface viewpoint* — the provided/required interface of each entity as a **real
+    signature** (operation, typed parameters, return, errors), not "provides a read
+    feature".
+  - *Interaction viewpoint (data flow)* — the typed payload crossing each boundary
+    (`producer → [Type] → consumer`) for the primary scenario, plus the failure path.
+- **Lock the SDD at L1 — concrete and testable** (see `adr/ADR-0006`): real signatures,
+  typed payloads, and *Acceptance criteria* pass conditions phrased as **testable
+  assertions** (each becomes a downstream TDD test). Do **not** emit code artifacts
+  (OpenAPI/protobuf/stubs) — L2 enforcement is the downstream's job via TDD; the SDD
+  stays a concrete-but-prose contract.
+- The **Data design** table is the data dictionary: every type named as `[Type]` in the
+  interface/interaction viewpoints must be **defined** here (fields/structure, unit/range,
+  constraints). An undefined `[Type]` is not a lock — a named-but-undefined type leaks the
+  contract; define it or write `none`.
+- The **Architecture Decisions** table records every significant selection captured
+  during the grill — one row per decision: adopted option (with why), rejected
+  alternative(s) with reason, and an ADR reference: `adr/ADR-NNNN` once graduated,
+  `pending` for a contested decision awaiting downstream graduation, or `inline` when it
+  was not contested.
 - The **Acceptance criteria** table has exactly one row per scenario ID.
+- The **Change log** starts with a single row — today's date, `initial draft`, status
+  `draft`. Each later contract change written back from the downstream adds a row.
 - Downstream produces docx with `pandoc {project-name}.sdd.html -o {project-name}.sdd.docx`
   — mention this in the final report.
 
@@ -194,15 +240,38 @@ git -C document commit -m "docs(spec): add SDD for {project-name}"
 git -C document push
 ```
 
-**2 — Create GitHub issues**
+**2 — Graduate contested architecture selections to ADR**
+
+Graduate a row from the Architecture Decisions table to a standalone ADR **only when it is
+contested** — a real alternative was seriously weighed and rejected for a non-obvious reason
+worth preserving. Everything else stays inline in the SDD table. (Heuristic from
+`adr/ADR-0002`: the inline table is the *dense, cheap trace*; an ADR is a *sparse, durable
+decision*. A decision with no seriously-weighed alternative is not contested — keep it inline.)
+
+Graduated ADRs live in the **implementing code repo's `adr/`** (record-adr's default
+location), next to the code and the developers who maintain it — not the document repo.
+Because spec-align runs upstream (document repo) where the code repo is not yet in context,
+graduation happens at the **downstream seam**: when Superpowers brainstorming confirms the
+contested decision against codebase reality (the final structure review), run `/record-adr`
+there to write `adr/ADR-NNNN-<slug>.md` and update `adr/README.md` in the code repo. Until
+then the SDD's Architecture Decisions row carries `ADR: pending`; once graduated it
+references `adr/ADR-NNNN-<slug>`. The issue body (step 3) carries this instruction. (If
+spec-align is itself run with the implementing code repo already in context, graduate the
+contested decisions immediately into that repo's `adr/` instead of deferring.)
+
+**3 — Create GitHub issues**
 
 One issue per implementation task. Every issue must trace to a BDD scenario.
+
+The issue body carries the SDD pointer and the downstream contract. Implementation runs
+the **Superpowers** workflow (brainstorming → writing-plans → TDD → review); the SDD is
+its input contract.
 
 ```
 gh issue create \
   --repo C-Sense/document \
   --title "SWE: {task}" \
-  --body "BDD scenario: {name}\nSDD: docs/specs/{project-name}.sdd.html\n\n{description}" \
+  --body "BDD scenario: {name}\nSDD: docs/specs/{project-name}.sdd.html\n\n{description}\n\nDownstream: implement via Superpowers (brainstorming = final structure review). Refine freely within the SDD contract; changing the contract (interface / boundary / data flow) requires writing back to the SDD. Graduate any Architecture Decisions row marked 'ADR: pending' into this repo's adr/ via /record-adr once brainstorming confirms the contested decision." \
   --assignee {config.team.swe.github} \
   --label "swe"
 ```
@@ -216,11 +285,41 @@ gh issue create \
   --label "hwe"
 ```
 
-**3 — Report**
+**4 — Report**
 
-List the SDD file path and all created issue URLs.
+List the SDD file path, the contested decisions marked `ADR: pending` for downstream
+graduation (or any ADRs graduated immediately if the code repo was in context), and all
+created issue URLs.
 
 ---
+
+## Downstream & drift control
+
+The SDD is an upstream, human-facing contract (HTML → docx). Implementation happens
+downstream in the code repo via the **Superpowers** workflow, not here, and not via
+OpenSpec (rejected in `adr/ADR-0006`: it occupies the same niche as Superpowers but
+enforces with prose rather than executable TDD).
+
+```
+spec-align (upstream · document repo · docx)
+  BDD(PO) → SDD(architect: interface/arch/data flow, L1; contested ⇒ ADR pending)
+                    │ issue carries the SDD pointer
+                    ▼
+Superpowers (downstream · code repo)
+  brainstorming → writing-plans → TDD → review
+   │ confirms contested decision ⇒ /record-adr → code repo adr/
+   ▲ final structure/solution review      ▲ the lock lives here (red test = drift caught)
+   └─ changes the SDD contract ⇒ write back to SDD ─────────────────────────────┘
+```
+
+- **Where the lock lives:** the SDD pins interface/architecture/data flow at L1
+  (concrete, testable); the *enforcement* is downstream TDD turning acceptance criteria
+  into red/green tests. The SDD does not emit code artifacts.
+- **Write-back rule:** downstream brainstorming is the final structure/solution-design
+  review. Refining *within* the SDD contract is free. *Changing* the contract (interface,
+  module boundary, data flow) is not a silent local edit — it must be written back to the
+  SDD, and if it is a selection change, recorded via `/record-adr`. This keeps the SDD the
+  source of truth and turns drift into an explicit, recorded event.
 
 ## Hard rules
 
@@ -236,4 +335,6 @@ List the SDD file path and all created issue URLs.
 - Do not write the SDD until all five Phase 2 areas are confirmed.
 - Do not create issues before the SDD is committed.
 - Every issue must trace back to a BDD scenario.
+- Capture selection reasoning during the grill and graduate significant selections to ADR
+  (`/record-adr`) — never let it evaporate into the SDD's result-only fields.
 - If `gh` is not authenticated, stop and ask the user to run `gh auth login`.

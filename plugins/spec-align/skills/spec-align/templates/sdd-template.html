@@ -71,8 +71,95 @@
   </tbody>
 </table>
 
-<h2>Component design</h2>
-<p>{{which modules change, what is new}}</p>
+<h2>Architecture design (IEEE 1016)</h2>
+<!-- IEEE 1016 design viewpoints. This is the locked architecture contract; the Phase 2 grill must challenge every row here. -->
+
+<h3>Composition viewpoint</h3>
+<!-- decomposition into design entities; one row per module/component -->
+<table border="1">
+  <thead>
+    <tr>
+      <th>Design entity</th>
+      <th>New / Changed</th>
+      <th>Single responsibility</th>
+      <th>Depends on</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{entity name}}</td>
+      <td>{{new | changed}}</td>
+      <td>{{one responsibility, no "and"}}</td>
+      <td>{{entities/resources it depends on, or "none"}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Interface viewpoint</h3>
+<!-- provided/required interface of each entity as a real signature, not prose -->
+<table border="1">
+  <thead>
+    <tr>
+      <th>Design entity</th>
+      <th>Operation (signature)</th>
+      <th>Inputs (typed)</th>
+      <th>Outputs (typed)</th>
+      <th>Errors / exceptions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{entity}}</td>
+      <td>{{operation(param: Type, ...) -> ReturnType}}</td>
+      <td>{{typed inputs}}</td>
+      <td>{{typed outputs}}</td>
+      <td>{{behavior at the boundary on malformed/out-of-range input}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Interaction viewpoint — data flow</h3>
+<!-- typed data flow across entity boundaries for the primary scenario -->
+<table border="1">
+  <thead>
+    <tr>
+      <th>Step</th>
+      <th>Producer</th>
+      <th>Payload [Type]</th>
+      <th>Consumer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>{{producer entity}}</td>
+      <td>{{payload [Type]}}</td>
+      <td>{{consumer entity}}</td>
+    </tr>
+  </tbody>
+</table>
+<p>Failure path: {{where the flow breaks under failure/load and how it is handled}}</p>
+
+<h2>Data design</h2>
+<!-- data dictionary: define every type/structure referenced as [Type] in the Interface and Interaction viewpoints above. The L1 lock is only real once these types are defined, not just named. If the design introduces no new types, a single row of "none". -->
+<table border="1">
+  <thead>
+    <tr>
+      <th>Type / structure</th>
+      <th>Fields / structure</th>
+      <th>Unit / range</th>
+      <th>Constraints</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{type name}}</td>
+      <td>{{field: Type, ... or primitive shape}}</td>
+      <td>{{unit and valid range, or "n/a"}}</td>
+      <td>{{invariants / validation rules, or "none"}}</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2>HW/SW interface</h2>
 
@@ -98,8 +185,30 @@
   </tbody>
 </table>
 
-<h2>Data flow</h2>
-<p>{{input → processing → output for the primary scenario}}</p>
+<h2>Architecture decisions</h2>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Decision</th>
+      <th>Adopted (why)</th>
+      <th>Rejected alternatives (reason)</th>
+      <th>ADR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- one row per significant selection captured during the grill; if none, a single row of "none" -->
+    <!-- ADR column: a contested selection (real alternative seriously weighed and rejected) graduates to the code repo's adr/ via /record-adr downstream — mark it "pending" here, "adr/ADR-NNNN" once graduated; everything else is "inline" -->
+    <tr>
+      <td>AD1</td>
+      <td>{{what was being decided}}</td>
+      <td>{{adopted option}} — {{why}}</td>
+      <td>{{option B — reason}}<br>{{option C — reason}}</td>
+      <td>{{adr/ADR-NNNN | pending | inline}}</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2>Acceptance criteria</h2>
 
@@ -116,7 +225,7 @@
     <tr>
       <td>S1</td>
       <td>{{manual | automated | customer sign-off}}</td>
-      <td>{{measurable pass condition, not subjective}}</td>
+      <td>{{measurable pass condition phrased as a testable assertion — becomes a downstream TDD test}}</td>
     </tr>
   </tbody>
 </table>
@@ -137,6 +246,25 @@
       <td>{{question}}</td>
       <td>{{owner}}</td>
       <td>{{YYYY-MM-DD or "n/a"}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Change log</h2>
+<!-- one row per material revision of this SDD, newest first; the initial draft is the first row. (git is the real history; this table is what docx readers see.) -->
+<table border="1">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Change</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{YYYY-MM-DD}}</td>
+      <td>{{what changed; "initial draft" for the first row}}</td>
+      <td>{{draft | reviewed | approved | superseded}}</td>
     </tr>
   </tbody>
 </table>

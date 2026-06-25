@@ -66,25 +66,38 @@ guessing.
 
 ---
 
-### Step 2 — Grill the plan
+### Step 2 — Grill the architecture (challenge it, don't transcribe it)
 
-One question at a time. For every design decision, ask:
-> "Which BDD scenario does this serve?"
+One question at a time. Every question **challenges the design — you are trying to break
+it**, not record it. Still tie each decision to a scenario ("Which BDD scenario does this
+serve?") and flag **scope creep** (plan element with no scenario) and **gaps** (scenario
+with no coverage) — but the core is adversarial pressure on the architecture along the
+**IEEE 1016 design viewpoints** the SDD records. Do not advance until each is confirmed:
 
-Flag **scope creep** (plan element with no corresponding scenario) and **gaps** (BDD
-scenario with no plan coverage) explicitly.
-
-Cover these areas in order. Do not advance until each is confirmed:
-
-1. **Component breakdown** — which existing modules change, what new ones are needed.
-2. **HW/SW interface** — for each scenario touching hardware: data format, sample rate,
-   timing, protocol.
-3. **Data flow** — from input to user-visible output for the primary scenario.
-4. **Error handling** — what happens when each scenario fails.
-5. **Out of scope** — what the BDD does NOT require that might be tempting to build.
+1. **Composition viewpoint** — challenge the decomposition.
+   > "Why is this one entity and not two? Why these and not fewer?"
+   > "State each entity's single responsibility without using 'and' — if you can't, the
+   > boundary is wrong."
+2. **Interface viewpoint** — challenge each boundary contract.
+   > "Give me the exact signature: operation, parameter types, return type, errors."
+   > "Can a consumer use this without reading its internals? What happens when the input
+   > is malformed or out of range?"
+3. **Interaction viewpoint (data flow)** — challenge the flow.
+   > "Trace the typed payload from input to user-visible output — what type crosses each
+   > boundary? Where does it break under failure or load?"
+4. **HW/SW interface** — for each scenario touching hardware: data format, sample rate,
+   timing, protocol — and what happens when the signal is out of spec.
+5. **Out of scope** — what the BDD does NOT require that this architecture is tempted to
+   build.
 
 For every contradiction between the plan and a BDD constraint, state it explicitly:
 > "Your plan assumes X. BDD constraint says Y. Which takes precedence?"
+
+**Capture the selection — do not discard it.** Each time a decision resolves in favour of
+one option over others, record the rejected alternative(s) and the one-line reason
+immediately. That reasoning is alive only during the grill; it is the raw material for the
+SDD's **Architecture decisions** section (and for the ADRs the engineer graduates later in
+Claude Code).
 
 Do not move to output until all five areas are confirmed and no contradictions remain.
 
@@ -139,8 +152,37 @@ match the BDD artifact:
 | **In** | {deliverables derived from scenarios} |
 | **Out** | {explicit exclusions from Step 2} |
 
-## Component design
-{which modules change, what is new}
+## Architecture design (IEEE 1016)
+
+### Composition viewpoint
+
+| Design entity | New / Changed | Single responsibility | Depends on |
+|---------------|---------------|-----------------------|------------|
+| {entity} | {new \| changed} | {one responsibility, no "and"} | {dependencies or "none"} |
+
+### Interface viewpoint
+
+| Design entity | Operation (signature) | Inputs (typed) | Outputs (typed) | Errors / exceptions |
+|---------------|-----------------------|----------------|-----------------|---------------------|
+| {entity} | {operation(param: Type, ...) -> ReturnType} | {typed inputs} | {typed outputs} | {boundary behavior on bad input} |
+
+### Interaction viewpoint — data flow
+
+| Step | Producer | Payload [Type] | Consumer |
+|------|----------|----------------|----------|
+| 1 | {producer entity} | {payload [Type]} | {consumer entity} |
+
+Failure path: {where the flow breaks under failure/load and how it is handled}
+
+## Data design
+
+Data dictionary — define every type/structure referenced as `[Type]` in the viewpoints
+above (the L1 lock is only real once these types are defined, not just named). If no new
+types, a single row of "none".
+
+| Type / structure | Fields / structure | Unit / range | Constraints |
+|------------------|--------------------|--------------|-------------|
+| {type name} | {field: Type, ... or primitive shape} | {unit and valid range, or "n/a"} | {invariants / validation rules, or "none"} |
 
 ## HW/SW interface
 
@@ -148,18 +190,28 @@ match the BDD artifact:
 |----------|-------------|-------------|--------|----------|
 | S1 | {format} | {rate} | {timing} | {protocol} |
 
-## Data flow
-{input → processing → output for primary scenario}
+## Architecture decisions
+
+| ID | Decision | Adopted (why) | Rejected alternatives (reason) | ADR |
+|----|----------|---------------|--------------------------------|-----|
+| AD1 | {what was decided} | {adopted option — why} | {option B — reason; option C — reason} | {adr/ADR-NNNN \| pending \| inline} |
 
 ## Acceptance criteria
 
 | Scenario | Verification | Pass condition |
 |----------|--------------|----------------|
-| S1 | {manual | automated | customer sign-off} | {measurable pass condition} |
+| S1 | {manual | automated | customer sign-off} | {pass condition as a testable assertion — becomes a downstream TDD test} |
 
 ## Open questions
 | Question | Owner | Due |
 |----------|-------|-----|
+
+## Change log
+One row per material revision, newest first; the initial draft is the first row.
+
+| Date | Change | Status |
+|------|--------|--------|
+| {today} | initial draft | draft |
 ```
 
 **2 — Issue list** (one issue per implementation task; every issue must trace to a BDD
@@ -173,8 +225,10 @@ scenario). Output as a table the engineer can hand to `/spec-align`:
 **3 — Handoff line:**
 > "Copy the SDD draft and the issue list, then run `/spec-align` in Claude Code with the
 > BDD artifact + this plan. It will fill the SDD HTML template, save it to
-> `document/docs/specs/{project-name}.sdd.html`, commit, push, and create these issues.
-> The HTML converts to docx with pandoc. This chat is not a record."
+> `document/docs/specs/{project-name}.sdd.html`, commit, push, mark contested selections
+> `ADR: pending` (they graduate to the implementing code repo's `adr/` downstream via
+> `/record-adr`), and create these issues (which point downstream implementation at the
+> Superpowers workflow). The HTML converts to docx with pandoc. This chat is not a record."
 
 ---
 
