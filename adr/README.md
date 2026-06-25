@@ -6,3 +6,4 @@
 | [ADR-0002](ADR-0002-grill-graph-decision-graph-skill.md) | grill-graph: a decision-graph grilling skill | Proposed | 2026-06-05 |
 | [ADR-0003](ADR-0003-profile-based-harness.md) | Profile-Based Harness & Skill Enablement Model | Accepted | 2026-06-05 |
 | [ADR-0005](ADR-0005-grill-graph-on-demand-mindmap-visualization.md) | grill-graph visualization: on-demand bilingual HTML mindmap | Accepted | 2026-06-05 |
+| [ADR-0006](ADR-0006-spec-align-architecture-decision-layer.md) | spec-align: architecture-decision layer, SDD lock altitude, and downstream seam | Proposed | 2026-06-25 |
