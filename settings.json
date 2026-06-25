@@ -1,5 +1,5 @@
 {
-  "model": "claude-sonnet-4-6",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -92,6 +92,7 @@
       }
     }
   },
+  "tui": "fullscreen",
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true
 }
