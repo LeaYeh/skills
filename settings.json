@@ -1,28 +1,4 @@
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/scripts/checkpoint-session-start.sh"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/scripts/checkpoint-warn.sh"
-          }
-        ]
-      }
-    ]
-  },
   "enabledPlugins": {
     "copilot-review@appleboy-skills": true,
     "andrej-karpathy-skills@karpathy-skills": true,
